@@ -300,10 +300,16 @@ sequenceDiagram
 ## 🟣 ***Pour aller plus loin...***
 
 - Rendre le système complètement autonome en utilisant le principe des [services](https://fr.wikipedia.org/wiki/Daemon_(informatique)) (voir [cette page](https://www.malekal.com/creer-service-linux-systemd/)).
-- Utiliser un [planificateur de tâches](https://www.linuxtricks.fr/wiki/cron-et-crontab-le-planificateur-de-taches) afin d'effectuer une sauvegarde journalière de la BDD en cours :
+
+- Utiliser un [planificateur de tâches](https://www.linuxtricks.fr/wiki/cron-et-crontab-le-planificateur-de-taches) afin d'effectuer une sauvegarde journalière de la BDD :
   - sur le *Raspberry Pi 400* lui-même
   - sur une machine virtuelle *Debian* de votre poste de travail (via le réseau local)
   - dans le *cloud*
+    
+- Utiliser [*streamlit*](https://streamlit.io) à la place de *Flask* pour la partie 5.4.
+
+- Exposer les résultats sur internet à travers un tunnel grâce à [*localhost.run*](https://localhost.run).
+
 - Rendre la page web **dynamique**
 
 
