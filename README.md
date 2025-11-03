@@ -310,7 +310,5 @@ sequenceDiagram
 
 - Exposer les résultats sur internet à travers un tunnel grâce à [*localhost.run*](https://localhost.run).
 
-- Rendre la page web **dynamique**
-
 
 
