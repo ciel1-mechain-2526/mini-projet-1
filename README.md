@@ -111,9 +111,7 @@ Durant la phase de mise au point, des **démonstrations pratiques** pourront êt
 
 ### 🔵 2. Utilisation des *boutons-poussoirs* de la carte *Micro:bit* :
    
-   - Dans un premier temps, on considérera qu'un bref appui sur le bouton **A** correspondra à un passage de véhicule dans le sens **gauche vers droite** (et **droite vers gauche** pour le bouton **B**). La carte *Micro:bit* transmettra le code ASCII de 'G' (ou 'D') en temps réel, c'est à dire **immédiatement** après la détection.
-   
-   - Dans un deuxième temps, on simulera le passage d'un véhicule de la **gauche vers la droite** par un bref appui sur **A** suivi d'un bref appui sur **B**. Le passage d'un véhicule de la **droite vers la gauche** sera simulé par un bref appui sur **B** suivi d'un bref appui sur **A**. On transmettra alors une information représentant la vitesse, supposée **inversement proportionnelle** à l’intervalle de temps entre les deux appuis :
+   On simulera le passage d'un véhicule de la **gauche vers la droite** par un bref appui sur **A** suivi d'un bref appui sur **B**. Le passage d'un véhicule de la **droite vers la gauche** sera simulé par un bref appui sur **B** suivi d'un bref appui sur **A**. On transmettra alors une information représentant la vitesse, supposée **inversement proportionnelle** à l’intervalle de temps entre les deux appuis :
      
      > **V = 20000 / Δt** (avec V en km/h et Δt en ms)
    
@@ -121,47 +119,7 @@ Durant la phase de mise au point, des **démonstrations pratiques** pourront êt
 
    - On utilisera la *matrice de leds* pour indiquer le sens de passage du dernier véhicule détecté (**←** ou **→**)
 
-### 🔵 3. Simulateur de trafic
-   
-Ce script *Python* simule le trafic sur une voie de circulation. Il génère des véhicules fictifs en temps réel, et transmet les données relatives au **sens de circulation** ainsi qu’à la **vitesse (en km/h)** via une liaison série simulée à l’aide de deux *pseudo-terminaux interconnectés*.
-
-Les terminaux `spw` et `spr` sont en réalité des **liens symboliques** vers des périphériques `/dev/pts/N`, créés dynamiquement par la commande `socat`. Le script écrit sur `spw`, tandis que `spr` peut être utilisé pour lire les données avec un outil comme **minicom** :
-
-```bash
-minicom -D /dev/pts/3 -b 115200
-```
-
-> Remplacez `/dev/pts/3` par le périphérique réel pointé par `spr`, que vous pouvez identifier avec `ls -l spr`.
-
-#### Script Python :
-
-```python
-import random
-import os
-import time
-from scipy.stats import triang
-import serial
-
-# Création de deux pseudo-ports série interconnectés (spw et spr) :
-os.system('socat -d -d pty,raw,echo=0,link=spw pty,raw,echo=0,link=spr &')
-time.sleep(3)
-
-ser = serial.Serial(port='spw', baudrate=115200)  # ouverture du port série spw
-
-while True:
-    # Génération d'un temps aléatoire triangulaire (a=1, mode=2, b=10)
-    t = triang.rvs(c=(2-1)/(10-1), loc=1, scale=9)  # scale = b - a = 9
-    s = random.choice(('G', 'D'))                  # sens aléatoire
-    v = round(random.gauss(80, 10))                # vitesse aléatoire
-    print(s + str(v))
-    ser.write(bytes(s + str(v) + '\r\n', 'ASCII')) # envoi sur port série
-    time.sleep(t)
-```
-
-> #### Remarque :
-> Vous pourrez utiliser ce script comme **remplaçant temporaire** de la carte *Micro\:bit* pour effectuer vos tests d’acquisition (mise au point du script `ser2db.py`)
-
-### 🔵 4. Base de données *SQLite*
+### 🔵 3. Base de données *SQLite*
    
 La base de données "trafic.db" ne contiendra qu'une table nommée "trafic" dont le *schéma*  est donné :
 
@@ -173,7 +131,7 @@ Vous pourrez travailler avec la base de données fictive [trafic2023.db](trafic2
 
 ![](images/trafic2023.db.png)
 
-### 🔵 5. Restitution du trafic : Du texte brut au web enrichi
+### 🔵 4. Restitution du trafic : Du texte brut au web enrichi
 
 > Vous réaliserez successivement les 4 types de `restitution du trafic` présentés ci-dessous en vérifiant à chaque fois que les données sont bien consultables à distance avec un **navigateur** et/ou une **commande HTTP**.
 
@@ -204,7 +162,7 @@ flowchart LR
     classDef right fill:#d4edda,stroke:#155724,stroke-width:1px,color:#000;
 ```
 
-✔️ 5.1 *Dans un premier temps* : En affichant du **texte brut** (`mimetype="text/plain"`).
+✔️ 4.1 *Dans un premier temps* : En affichant du **texte brut** (`mimetype="text/plain"`).
 
 Voir la [définition](https://fr.wikipedia.org/wiki/Type_de_m%C3%A9dias) de `mimetype`.
 
@@ -214,7 +172,7 @@ Voir la [définition](https://fr.wikipedia.org/wiki/Type_de_m%C3%A9dias) de `mim
 
 Vérifiez que ces données sont accessibles depuis une autre machine sur le réseau, avec un navigateur web classique, un navigateur mode texte comme [`lynx`](https://lynx.invisible-island.net), et la commande [`curl`](https://www.it-connect.fr/curl-loutil-testeur-des-protocoles-div).
 
-✔️ 5.2  *Dans un deuxième temps* : en affichant un graphique (`mimetype="image/png"`).
+✔️ 4.2  *Dans un deuxième temps* : en affichant un graphique (`mimetype="image/png"`).
 
 > Ici on a choisi de représenter le nombre total de véhicules sur une journée par tranches horaires et en indiquant le sens de passage à l'aide de barres de couleurs différentes (capture d'écran obtenue à partir de [trafic2023.db](trafic2023.db)) :
 
@@ -222,7 +180,7 @@ Vérifiez que ces données sont accessibles depuis une autre machine sur le rés
 
 > *Remarque :* Le choix du jour est effectué par passage d'un paramètre `jour` dans l'URL par la méthode GET.
 
-✔️ 5.3 *Dans un troisième temps* : en renvoyant la même information que le graphique précédent, mais au format [JSON](https://fr.wikipedia.org/wiki/JavaScript_Object_Notation) (`mimetype="application/json"`) , comme le ferait une [API](https://fr.wikipedia.org/wiki/Interface_de_programmation).
+✔️ 4.3 *Dans un troisième temps* : en renvoyant la même information que le graphique précédent, mais au format [JSON](https://fr.wikipedia.org/wiki/JavaScript_Object_Notation) (`mimetype="application/json"`) , comme le ferait une [API](https://fr.wikipedia.org/wiki/Interface_de_programmation).
 
 Résultat attendu (par exemple avec la commande `curl`) :
 
@@ -249,7 +207,7 @@ Résultat attendu :
 
 ![](images/result-client-api.png)
 
-✔️ 5.4 *Dans un quatrième temps* : en affichant une page **HTML** (`mimetype="text/html"`) avec :
+✔️ 4.4 *Dans un quatrième temps* : en affichant une page **HTML** (`mimetype="text/html"`) avec :
 - des données enrichies (texte et graphiques) comme :
   - vitesses moyennes dans les deux sens de circulation
   - pourcentage de véhicules dépassant une vitesse maximale autorisée
@@ -276,27 +234,6 @@ Résultat attendu :
 
 #### Lien :  [Moniteur de température](microbit-serial-sqlite-web.md)
 
-### 🔵 8. Diagramme de séquence
-
-```mermaid
-sequenceDiagram
-    participant Capteur as Capteur (boutons)
-    participant MB as Micro:bit
-    participant RPi as Raspberry Pi 400
-    participant BDD as Base de Données
-    participant WEB as Serveur Web
-    participant Res as Client HTTP
-
-    Capteur->>MB: lireBoutons()
-    MB->>RPi: transmettre(sens, vitesse)
-    RPi->>BDD: inserer(timestamp, sens, vitesse)
-    Res->>WEB: requête HTTP
-    WEB->>BDD: selectDonnées()
-    WEB-->>Res: réponse (HTML / texte / image)
-```
-
----
-
 ## 🟣 ***Pour aller plus loin...***
 
 - Rendre le système complètement autonome en utilisant le principe des [services](https://fr.wikipedia.org/wiki/Daemon_(informatique)) (voir [cette page](https://www.malekal.com/creer-service-linux-systemd/)).
@@ -309,6 +246,3 @@ sequenceDiagram
 - Utiliser [*streamlit*](https://streamlit.io) à la place de *Flask* pour la partie 5.4.
 
 - Exposer les résultats sur internet à travers un tunnel grâce à [*localhost.run*](https://localhost.run).
-
-
-
