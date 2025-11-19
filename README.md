@@ -219,7 +219,7 @@ Résultat attendu :
 - passage de paramètres par GET (par exemple pour définir une période d'analyse)
 - etc.
   
-### 🔵 6. Exemple d'organisation matérielle et logicielle
+### 🔵 5. Exemple d'organisation matérielle et logicielle
    
 ![](images/structure.drawio.svg)
 
@@ -231,7 +231,7 @@ Résultat attendu :
 > *note* :  
 > `ser2db.py` et `db2web.py` peuvent être fusionnés dans un seul script Python (nommé par exemple `ser2db2web.py`) en utilisant du [*threading*](https://www.docstring.fr/glossaire/threading/).
 
-### 🔵 7. Exemple de réalisation d'un projet du même type
+### 🔵 6. Exemple de réalisation d'un projet du même type
 
 #### Lien :  [Moniteur de température](microbit-serial-sqlite-web.md)
 
