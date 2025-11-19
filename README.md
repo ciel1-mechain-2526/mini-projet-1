@@ -105,9 +105,10 @@ Durant la phase de mise au point, des **démonstrations pratiques** pourront êt
 
 ## 🟢 ***Conseils pratiques et contraintes du projet***
 
-### 🔵 1. Pour programmer la carte *Micro:bit* en micropython :
+### 🔵 1. Pour programmer :
 
-- https://python.microbit.org/
+- https://python.microbit.org/ (carte microbit)
+- **Thonny** pour le code Python sur la raspberry 400 (déjà installé)
 
 ### 🔵 2. Utilisation des *boutons-poussoirs* de la carte *Micro:bit* :
    
